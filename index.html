@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lista de Contatos</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style2.css">
+</head>
+<body class="bg-light">
+
+  <div class="container">
+    <div class="lista-container">
+      <h2 class="mb-4 text-center text-primary">Lista de Contatos</h2>
+      
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>E-mail</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="lista-contatos">
+            <!-- Os contatos serão inseridos aqui -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="sem-contatos" class="alert alert-info text-center" style="display: none;">
+        Nenhum contato cadastrado.
+      </div>
+    </div>
+  </div>
+
+  <a href="cadastro.html" class="arrow-link">← Novo Contato</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="lista.js"></script>
+</body>
+</html>
