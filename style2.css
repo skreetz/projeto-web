@@ -44,14 +44,56 @@ body {
   text-decoration: underline;
 }
 
+/* Estilos para o toast de confirmação */
+.toast-container {
+  z-index: 1050;
+}
+
+.toast {
+  min-width: 250px;
+  background-color: #28a745 !important;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.toast.text-bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.toast-body {
+  font-weight: 500;
+}
+
+.btn-close-white {
+  filter: brightness(0) invert(1);
+}
+
+/* Estilos para o container de erros */
+#error-container ul {
+  padding-left: 1.5rem;
+  margin-bottom: 0;
+}
+
 @media only screen and (max-width: 768px) {
-    .contact-list {
-        width: 95%;
-    }
+  .contact-list {
+    width: 95%;
+  }
+  
+  .form-container {
+    margin: 30px auto;
+    padding: 1.5rem;
+  }
+  
+  .toast-container {
+    width: 90%;
+    right: 5%;
+  }
 }
 
 @media only screen and (max-width: 992px) {
-    .contact-list {
-        max-width: 700px;
-    }
+  .contact-list {
+    max-width: 700px;
+  }
 }

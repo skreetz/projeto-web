@@ -10,10 +10,16 @@
 </head>
 <body class="bg-light">
 
+  <!-- Container para toasts de notificação -->
+  <div class="toast-container position-fixed top-0 end-0 p-3" id="toast-container"></div>
+
   <div class="container">
     <div class="form-container">
       <h2 class="mb-4 text-center text-primary" id="form-title">Cadastro de Contato</h2>
 
+      <!-- Alerta para mensagens de erro -->
+      <div class="alert alert-danger mt-3 mb-3 d-none" id="error-container"></div>
+      
       <form id="contatoForm" novalidate>
         <input type="hidden" id="contato-id">
         

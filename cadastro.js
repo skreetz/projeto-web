@@ -9,12 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const formTitle = document.getElementById('form-title');
   const btnSalvar = document.getElementById('btn-salvar');
   const btnCancelar = document.getElementById('btn-cancelar');
-  
-  // Cria elemento para mensagens de erro
-  const errorContainer = document.createElement('div');
-  errorContainer.className = 'alert alert-danger mt-3 mb-3 d-none';
-  errorContainer.id = 'error-container';
-  contatoForm.insertBefore(errorContainer, contatoForm.firstChild);
+  const errorContainer = document.getElementById('error-container');
   
   // Verifica se estamos em modo de edição (URL contém parâmetro id)
   const urlParams = new URLSearchParams(window.location.search);
@@ -39,9 +34,57 @@ document.addEventListener('DOMContentLoaded', function() {
       emailInput.value = contato.email || '';
     } else {
       // Se o contato não for encontrado, redireciona para a página de listagem
-      alert('Contato não encontrado!');
-      window.location.href = 'index.html';
+      mostrarMensagemConfirmacao('Contato não encontrado!', 'danger');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000);
     }
+  }
+  
+  // Função para mostrar mensagem de confirmação
+  function mostrarMensagemConfirmacao(mensagem, tipo = 'success') {
+    // Cria elemento toast
+    const toastElement = document.createElement('div');
+    toastElement.className = `toast align-items-center text-bg-${tipo} border-0`;
+    toastElement.setAttribute('role', 'alert');
+    toastElement.setAttribute('aria-live', 'assertive');
+    toastElement.setAttribute('aria-atomic', 'true');
+    
+    // Conteúdo do toast
+    const toastBody = document.createElement('div');
+    toastBody.className = 'd-flex';
+    
+    // Div para o corpo do toast
+    const flexDiv = document.createElement('div');
+    flexDiv.className = 'toast-body';
+    flexDiv.textContent = mensagem;
+    
+    // Botão para fechar o toast
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'btn-close btn-close-white me-2 m-auto';
+    closeButton.setAttribute('data-bs-dismiss', 'toast');
+    closeButton.setAttribute('aria-label', 'Fechar');
+    
+    // Monta a estrutura do toast
+    toastBody.appendChild(flexDiv);
+    toastBody.appendChild(closeButton);
+    toastElement.appendChild(toastBody);
+    
+    // Adiciona o toast ao container
+    document.getElementById('toast-container').appendChild(toastElement);
+    
+    // Inicializa e exibe o toast usando Bootstrap
+    const toast = new bootstrap.Toast(toastElement, {
+      delay: 3000,
+      autohide: true
+    });
+    toast.show();
+    
+    // Remove o toast do DOM após ocultar
+    toastElement.addEventListener('hidden.bs.toast', function() {
+      toastElement.remove();
+    });
   }
   
   // Função para validar o formulário
@@ -103,6 +146,37 @@ document.addEventListener('DOMContentLoaded', function() {
     return true;
   }
   
+  // Adiciona formatação automática ao telefone enquanto o usuário digita
+  telefoneInput.addEventListener('input', function(event) {
+    let value = this.value.replace(/\D/g, '');
+    let formattedValue = '';
+    
+    if (value.length > 0) {
+      // Adiciona parênteses para o DDD
+      if (value.length > 2) {
+        formattedValue = '(' + value.substring(0, 2) + ') ' + value.substring(2);
+      } else {
+        formattedValue = '(' + value;
+      }
+      
+      // Adiciona hífen para separar os últimos 4 dígitos
+      if (value.length > 6) {
+        const finalPart = formattedValue.substring(5);
+        if (value.length > 10) {  // Celular (11 dígitos)
+          formattedValue = formattedValue.substring(0, 5) + 
+                          finalPart.substring(0, 5) + '-' + 
+                          finalPart.substring(5);
+        } else {  // Telefone fixo (10 dígitos)
+          formattedValue = formattedValue.substring(0, 5) + 
+                          finalPart.substring(0, 4) + '-' + 
+                          finalPart.substring(4);
+        }
+      }
+    }
+    
+    this.value = formattedValue;
+  });
+  
   // Adiciona um evento de escuta para o envio do formulário
   contatoForm.addEventListener('submit', function(event) {
     // Previne o comportamento padrão de submissão do formulário
@@ -130,8 +204,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Salva a lista atualizada no localStorage
         localStorage.setItem('contatos', JSON.stringify(contatos));
         
-        // Redireciona para a página de listagem
-        window.location.href = 'index.html';
+        // Mostra mensagem de confirmação
+        mostrarMensagemConfirmacao('Contato atualizado com sucesso!');
+        
+        // Aguarda um pouco para que o usuário veja a mensagem antes de redirecionar
+        setTimeout(function() {
+          window.location.href = 'index.html';
+        }, 2000);
       }
     } else {
       // Modo de criação - cria um novo contato
@@ -148,8 +227,14 @@ document.addEventListener('DOMContentLoaded', function() {
       // Salva a lista atualizada no localStorage
       localStorage.setItem('contatos', JSON.stringify(contatos));
       
-      // Redireciona para a página de listagem
-      window.location.href = 'index.html';
+      // Mostra mensagem de confirmação
+      mostrarMensagemConfirmacao('Contato adicionado com sucesso!');
+      
+      // Limpa o formulário para permitir novas entradas
+      contatoForm.reset();
+      nomeInput.classList.remove('is-valid');
+      telefoneInput.classList.remove('is-valid');
+      emailInput.classList.remove('is-valid');
     }
   });
   
@@ -160,12 +245,16 @@ document.addEventListener('DOMContentLoaded', function() {
       window.location.href = 'index.html';
     }
     // Se estiver no modo de criação, apenas limpa o formulário (comportamento padrão do reset)
+    nomeInput.classList.remove('is-valid', 'is-invalid');
+    telefoneInput.classList.remove('is-valid', 'is-invalid');
+    emailInput.classList.remove('is-valid', 'is-invalid');
   });
   
   // Adiciona validação em tempo real para os campos
   nomeInput.addEventListener('blur', function() {
     if (this.value.trim() === '' || this.value.trim().length < 3) {
       this.classList.add('is-invalid');
+      this.classList.remove('is-valid');
     } else {
       this.classList.remove('is-invalid');
       this.classList.add('is-valid');
@@ -176,6 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const telefoneRegex = /^(\d{10,11}|\(\d{2}\)\s?\d{4,5}-?\d{4})$/;
     if (this.value.trim() === '' || !telefoneRegex.test(this.value.replace(/\D/g, ''))) {
       this.classList.add('is-invalid');
+      this.classList.remove('is-valid');
     } else {
       this.classList.remove('is-invalid');
       this.classList.add('is-valid');
@@ -187,6 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(this.value.trim())) {
         this.classList.add('is-invalid');
+        this.classList.remove('is-valid');
       } else {
         this.classList.remove('is-invalid');
         this.classList.add('is-valid');
