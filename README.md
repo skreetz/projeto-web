@@ -1,1 +1,1 @@
-Projeto CRUD de Agenda de Contatos para a disciplina Sistemas Web
+Projeto CRUD de Agenda de Contatos
